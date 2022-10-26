@@ -1,6 +1,6 @@
-.App {
+/* .App {
   text-align: center;
-}
+} */
 
 .App-logo {
   height: 40vmin;
@@ -26,6 +26,14 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.product-name{
+ padding: 0px 8px;
+}
+
+.product-price{
+  padding: 0px 8px;
 }
 
 @keyframes App-logo-spin {
