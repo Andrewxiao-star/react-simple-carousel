@@ -2,158 +2,158 @@ import React, { useEffect, useState } from "react";
 import './Carousel.css'
 
 const Carousel = (props) => {
-  const {children, show, infiniteLoop} = props
+    const { children, show, infiniteLoop } = props
 
-  const [currentIndex, setCurrentIndex] = useState(infiniteLoop ? show : 0)
-  const [length, setLength] = useState(children.length)
+    const [currentIndex, setCurrentIndex] = useState(infiniteLoop ? show : 0)
+    const [length, setLength] = useState(children.length)
 
-  const [isRepeating, setIsRepeating] = useState(infiniteLoop && children.length > show)
-  const [transitionEnabled, setTransitionEnabled] = useState(true)
+    const [isRepeating, setIsRepeating] = useState(infiniteLoop && children.length > show)
+    const [transitionEnabled, setTransitionEnabled] = useState(true)
 
-  const [touchPosition, setTouchPosition] = useState(null)
+    const [touchPosition, setTouchPosition] = useState(null)
 
-  // Set the length to match current children from props
+    // Set the length to match current children from props
 
-  useEffect(() => {
-      setLength(children.length)
-      setIsRepeating(infiniteLoop && children.length > show)
-  }, [children, infiniteLoop, show])
+    useEffect(() => {
+        setLength(children.length)
+        setIsRepeating(infiniteLoop && children.length > show)
+    }, [children, infiniteLoop, show])
 
-  useEffect(() => {
-      if (isRepeating) {
-          if (currentIndex === show || currentIndex === length) {
-              setTransitionEnabled(true)
-          }
-      }
-  }, [currentIndex, isRepeating, show, length])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      imageInterval()
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const imageInterval = () => {
-    setCurrentIndex(prevState => prevState + 1);
-    console.log("currentIndex",currentIndex);
-
-  }
-
-  const next = () => {
-      if (isRepeating || currentIndex < (length - show)) {
-          setCurrentIndex(prevState => 4)
+    useEffect(() => {
+        if (isRepeating) {
+            if (currentIndex === show || currentIndex === length) {
+                setTransitionEnabled(true)
+            }
         }
-        console.log("currentIndexnext",currentIndex);
+
+        if (currentIndex === 5) {
+            setTransitionEnabled(true)
+            setCurrentIndex(0)
+        }
+    }, [currentIndex, isRepeating, show, length])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            imageInterval()
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const imageInterval = () => {
+        setCurrentIndex(prevState => prevState + 1);
     }
 
-  const prev = () => {
-      if (isRepeating || currentIndex > 0) {
-          setCurrentIndex(prevState => 0)
-      }
-      console.log("currentIndexprev",currentIndex);
-  }
+    const next = () => {
+        if (isRepeating || currentIndex < (length - show)) {
+            setCurrentIndex(4)
+        }
+    }
 
-  const handleTouchStart = (e) => {
-      const touchDown = e.touches[0].clientX
-      setTouchPosition(touchDown)
-  }
+    const prev = () => {
+        if (isRepeating || currentIndex > 0) {
+            setCurrentIndex(0)
+        }
+    }
 
-  const handleTouchMove = (e) => {
-    console.log(e);
-      const touchDown = touchPosition
+    const handleTouchStart = (e) => {
+        const touchDown = e.touches[0].clientX
+        setTouchPosition(touchDown)
+    }
 
-      if(touchDown === null) {
-          return
-      }
+    const handleTouchMove = (e) => {
+        const touchDown = touchPosition
 
-      const currentTouch = e.touches[0].clientX
-      const diff = touchDown - currentTouch
+        if (touchDown === null) {
+            return
+        }
 
-      if (diff > 5) {
-          next()
-      }
+        const currentTouch = e.touches[0].clientX
+        const diff = touchDown - currentTouch
 
-      if (diff < -5) {
-          prev()
-      }
+        if (diff > 5) {
+            next()
+        }
 
-      setTouchPosition(null)
-  }
+        if (diff < -5) {
+            prev()
+        }
 
-  const handleTransitionEnd = () => {
-      if (isRepeating) {
-          if (currentIndex === 0) {
-              setTransitionEnabled(false)
-              setCurrentIndex(length)
-          } else if (currentIndex === length + show) {
-              setTransitionEnabled(false)
-              setCurrentIndex(show)
-          }
-      }
-  }
+        setTouchPosition(null)
+    }
 
-  const renderExtraPrev = () => {
-      let output = []
-      for (let index = 0; index < show; index++) {
-          output.push(children[length - 1 - index])
-      }
-      output.reverse()
-      return output
-  }
+    const handleTransitionEnd = () => {
+        if (isRepeating) {
+            if (currentIndex === 0) {
+                setTransitionEnabled(false)
+                setCurrentIndex(length)
+            } else if (currentIndex === length + show) {
+                setTransitionEnabled(false)
+                setCurrentIndex(show)
+            }
+        }
+    }
 
-  const renderExtraNext = () => {
-      let output = []
-      for (let index = 0; index < show; index++) {
-          output.push(children[index])
-      }
-      return output
-  }
+    const renderExtraPrev = () => {
+        let output = []
+        for (let index = 0; index < show; index++) {
+            output.push(children[length - 1 - index])
+        }
+        output.reverse()
+        return output
+    }
 
-  return (
-      <div className="carousel-container">
-          <div className="carousel-wrapper">
-              {/* You can alwas change the content of the button to other things */}
-              {
-                  (isRepeating || currentIndex > 0) &&
-                  <button onClick={prev} className="left-arrow">
-                      &lt;
-                  </button>
-              }
-              <div
-                  className="carousel-content-wrapper"
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-              >
-                  <div
-                      className={`carousel-content show-${show}`}
-                      style={{
-                          transform: `translateX(-${currentIndex * (100 / show)}%)`,
-                          transition: !transitionEnabled ? 'none' : undefined,
-                      }}
-                      onTransitionEnd={() => handleTransitionEnd()}
-                  >
-                      {
-                          (length > show && isRepeating) &&
-                          renderExtraPrev()
-                      }
-                      {children}
-                      {
-                          (length > show && isRepeating) &&
-                          renderExtraNext()
-                      }
-                  </div>
-              </div>
-              {/* You can alwas change the content of the button to other things */}
-              {
-                  (isRepeating || currentIndex < (length - show)) &&
-                  <button onClick={next} className="right-arrow">
-                      &gt;
-                  </button>
-              }
-          </div>
-      </div>
-  )
+    const renderExtraNext = () => {
+        let output = []
+        for (let index = 0; index < show; index++) {
+            output.push(children[index])
+        }
+        return output
+    }
+
+    return (
+        <div className="carousel-container">
+            <div className="carousel-wrapper">
+                {/* You can alwas change the content of the button to other things */}
+                {
+                    (isRepeating || currentIndex > 0) &&
+                    <button onClick={prev} className="left-arrow">
+                        &lt;
+                    </button>
+                }
+                <div
+                    className="carousel-content-wrapper"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                >
+                    <div
+                        className={`carousel-content show-${show}`}
+                        style={{
+                            transform: `translateX(-${currentIndex * (100 / show)}%)`,
+                            transition: !transitionEnabled ? 'none' : undefined,
+                        }}
+                        onTransitionEnd={() => handleTransitionEnd()}
+                    >
+                        {
+                            (length > show && isRepeating) &&
+                            renderExtraPrev()
+                        }
+                        {children}
+                        {
+                            (length > show && isRepeating) &&
+                            renderExtraNext()
+                        }
+                    </div>
+                </div>
+                {/* You can alwas change the content of the button to other things */}
+                {
+                    (isRepeating || currentIndex < (length - show)) &&
+                    <button onClick={next} className="right-arrow">
+                        &gt;
+                    </button>
+                }
+            </div>
+        </div>
+    )
 }
 
 export default Carousel
