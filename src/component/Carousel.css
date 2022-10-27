@@ -47,11 +47,11 @@
 }
 
 .left-arrow {
-  left: 24px;
+  left: 10px;
 }
 
 .right-arrow {
-  right: 24px;
+  right: 10px;
 }
 
 @media (hover: none) and (pointer: coarse) {

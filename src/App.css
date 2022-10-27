@@ -28,11 +28,20 @@
   color: #61dafb;
 }
 
+.product-image{
+  padding: 8px;
+  width: 200px;
+}
+
 .product-name{
- padding: 0px 8px;
+  font-family:arial;
+  padding: 0px 8px;
+  font-size: 14px;
 }
 
 .product-price{
+  font-family: Arial;
+  font-size: 10px;
   padding: 0px 8px;
 }
 
